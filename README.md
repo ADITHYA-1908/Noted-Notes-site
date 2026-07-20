@@ -34,11 +34,12 @@ Passwords are salted and hashed using Node's `scrypt`. Session tokens are stored
 
 ## Welcome emails
 
-Create a Resend API key and verify a sending domain, then configure:
+Enable 2-Step Verification for the Gmail account that will send the messages, create a Google App Password, then configure:
 
 ```text
-RESEND_API_KEY=re_...
-WELCOME_FROM_EMAIL=Noted <welcome@yourdomain.com>
+GMAIL_USER=youraccount@gmail.com
+GMAIL_APP_PASSWORD=your 16-character Google App Password
+WELCOME_FROM_EMAIL=Noted <youraccount@gmail.com>
 ```
 
-New users receive a welcome email after successful signup. If email delivery fails, account creation still succeeds and the server records the error in its logs.
+Do not use or store the account's normal Gmail password. New users receive a welcome email after successful signup. If email delivery fails, account creation still succeeds and the server records the error in its logs.

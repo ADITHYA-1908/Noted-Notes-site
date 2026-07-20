@@ -1,4 +1,5 @@
 import process from 'node:process'
+import nodemailer from 'nodemailer'
 
 const escapeHtml = (value) => String(value)
   .replaceAll('&', '&amp;')
@@ -8,26 +9,28 @@ const escapeHtml = (value) => String(value)
   .replaceAll("'", '&#039;')
 
 export const sendWelcomeEmail = async (user) => {
-  const apiKey = process.env.RESEND_API_KEY
-  const from = process.env.WELCOME_FROM_EMAIL
+  const gmailUser = process.env.GMAIL_USER
+  const gmailAppPassword = process.env.GMAIL_APP_PASSWORD
+  const from = process.env.WELCOME_FROM_EMAIL || `Noted <${gmailUser}>`
 
-  if (!apiKey || !from) {
+  if (!gmailUser || !gmailAppPassword) {
     console.log(`Welcome email skipped for ${user.email}: email service is not configured.`)
     return
   }
 
   const firstName = user.name.split(' ')[0]
   const safeName = escapeHtml(firstName)
-  const response = await fetch('https://api.resend.com/emails', {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      'Content-Type': 'application/json',
-      'Idempotency-Key': `welcome-${user.id}`,
+  const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: gmailUser,
+      pass: gmailAppPassword,
     },
-    body: JSON.stringify({
+  })
+
+  await transporter.sendMail({
       from,
-      to: [user.email],
+      to: user.email,
       subject: 'Welcome to Noted!',
       text: `Hi ${firstName},\n\nWelcome to Noted! We are happy to have you here. Your personal workspace is ready, so feel free to explore the app and capture your ideas whenever inspiration finds you.\n\nStart with one thought and let your collection grow from there.\n\nWarmly,\nThe Noted team`,
       html: `
@@ -50,11 +53,6 @@ export const sendWelcomeEmail = async (user) => {
             </table>
           </body>
         </html>`,
-    }),
+      headers: { 'X-Noted-User-ID': user.id },
   })
-
-  if (!response.ok) {
-    const details = await response.text()
-    throw new Error(`Resend rejected the welcome email (${response.status}): ${details}`)
-  }
 }
