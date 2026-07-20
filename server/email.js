@@ -20,7 +20,10 @@ export const sendWelcomeEmail = async (user) => {
   const firstName = user.name.split(' ')[0]
   const safeName = escapeHtml(firstName)
   const transporter = nodemailer.createTransport({
-    service: 'gmail',
+    host: 'smtp.gmail.com',
+    port: 465,
+    secure: true,
+    family: 4,
     connectionTimeout: 10000,
     greetingTimeout: 10000,
     socketTimeout: 15000,
