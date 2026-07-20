@@ -1,4 +1,5 @@
 import process from 'node:process'
+import { resolve4 } from 'node:dns/promises'
 import nodemailer from 'nodemailer'
 
 const escapeHtml = (value) => String(value)
@@ -19,11 +20,14 @@ export const sendWelcomeEmail = async (user) => {
 
   const firstName = user.name.split(' ')[0]
   const safeName = escapeHtml(firstName)
+  const [gmailIpv4] = await resolve4('smtp.gmail.com')
+  if (!gmailIpv4) throw new Error('Gmail SMTP did not return an IPv4 address.')
+
   const transporter = nodemailer.createTransport({
-    host: 'smtp.gmail.com',
+    host: gmailIpv4,
     port: 465,
     secure: true,
-    family: 4,
+    tls: { servername: 'smtp.gmail.com' },
     connectionTimeout: 10000,
     greetingTimeout: 10000,
     socketTimeout: 15000,
