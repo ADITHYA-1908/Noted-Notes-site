@@ -51,12 +51,11 @@ app.post('/api/auth/signup', async (request, response, next) => {
     if (await database.findUserByEmail(email)) return response.status(409).json({ message: 'An account with this email already exists.' })
     const passwordData = await hashPassword(password)
     const user = await database.createUser({ id: randomUUID(), name, email, passwordSalt: passwordData.salt, passwordHash: passwordData.hash, createdAt: new Date().toISOString() })
-    try {
-      await sendWelcomeEmail(user)
-    } catch (emailError) {
+    const token = await createSession(user)
+    response.status(201).json({ user: publicUser(user), token })
+    sendWelcomeEmail(user).catch((emailError) => {
       console.error(`Account created, but welcome email failed for ${user.email}:`, emailError.message)
-    }
-    response.status(201).json({ user: publicUser(user), token: await createSession(user) })
+    })
   } catch (error) {
     if (error.code === '23505') return response.status(409).json({ message: 'An account with this email already exists.' })
     next(error)

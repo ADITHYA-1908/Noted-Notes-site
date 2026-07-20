@@ -39,7 +39,6 @@ Enable 2-Step Verification for the Gmail account that will send the messages, cr
 ```text
 GMAIL_USER=youraccount@gmail.com
 GMAIL_APP_PASSWORD=your 16-character Google App Password
-WELCOME_FROM_EMAIL=Noted <youraccount@gmail.com>
 ```
 
 Do not use or store the account's normal Gmail password. New users receive a welcome email after successful signup. If email delivery fails, account creation still succeeds and the server records the error in its logs.

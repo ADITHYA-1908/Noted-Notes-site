@@ -10,8 +10,7 @@ const escapeHtml = (value) => String(value)
 
 export const sendWelcomeEmail = async (user) => {
   const gmailUser = process.env.GMAIL_USER
-  const gmailAppPassword = process.env.GMAIL_APP_PASSWORD
-  const from = process.env.WELCOME_FROM_EMAIL || `Noted <${gmailUser}>`
+  const gmailAppPassword = process.env.GMAIL_APP_PASSWORD?.replaceAll(' ', '')
 
   if (!gmailUser || !gmailAppPassword) {
     console.log(`Welcome email skipped for ${user.email}: email service is not configured.`)
@@ -22,14 +21,17 @@ export const sendWelcomeEmail = async (user) => {
   const safeName = escapeHtml(firstName)
   const transporter = nodemailer.createTransport({
     service: 'gmail',
+    connectionTimeout: 10000,
+    greetingTimeout: 10000,
+    socketTimeout: 15000,
     auth: {
       user: gmailUser,
       pass: gmailAppPassword,
     },
   })
 
-  await transporter.sendMail({
-      from,
+  const info = await transporter.sendMail({
+      from: `Noted <${gmailUser}>`,
       to: user.email,
       subject: 'Welcome to Noted!',
       text: `Hi ${firstName},\n\nWelcome to Noted! We are happy to have you here. Your personal workspace is ready, so feel free to explore the app and capture your ideas whenever inspiration finds you.\n\nStart with one thought and let your collection grow from there.\n\nWarmly,\nThe Noted team`,
@@ -55,4 +57,5 @@ export const sendWelcomeEmail = async (user) => {
         </html>`,
       headers: { 'X-Noted-User-ID': user.id },
   })
+  console.log(`Welcome email sent to ${user.email} (${info.messageId})`)
 }
