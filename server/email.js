@@ -28,8 +28,8 @@ export const sendWelcomeEmail = async (user) => {
     body: JSON.stringify({
       from,
       to: [user.email],
-      subject: 'A wholehearted welcome to Noted',
-      text: `Hi ${firstName},\n\nWelcome to Noted. We are genuinely happy to have you here. Your personal space is ready whenever inspiration finds you.\n\nStart with one thought, and let your collection grow from there.\n\nWarmly,\nThe Noted team`,
+      subject: 'Welcome to Noted!',
+      text: `Hi ${firstName},\n\nWelcome to Noted! We are happy to have you here. Your personal workspace is ready, so feel free to explore the app and capture your ideas whenever inspiration finds you.\n\nStart with one thought and let your collection grow from there.\n\nWarmly,\nThe Noted team`,
       html: `
         <!doctype html>
         <html lang="en">
@@ -41,7 +41,7 @@ export const sendWelcomeEmail = async (user) => {
                   <tr><td style="padding:38px 32px">
                     <p style="margin:0 0 12px;color:#9a5a32;font-size:12px;font-weight:bold;text-transform:uppercase">Welcome to your workspace</p>
                     <h1 style="margin:0 0 20px;font-size:28px;line-height:1.25;color:#202722">Hi ${safeName}, we are so glad you are here.</h1>
-                    <p style="margin:0 0 16px;color:#626a64;font-size:16px;line-height:1.65">Welcome to Noted. We are genuinely happy to have you with us. Your personal space is ready whenever inspiration finds you.</p>
+                    <p style="margin:0 0 16px;color:#626a64;font-size:16px;line-height:1.65">Welcome to Noted! We are happy to have you with us. Your personal workspace is ready, so feel free to explore the app and capture your ideas whenever inspiration finds you.</p>
                     <p style="margin:0;color:#626a64;font-size:16px;line-height:1.65">Start with one thought, and let your collection grow from there.</p>
                   </td></tr>
                   <tr><td style="padding:22px 32px;background:#f8f9f6;color:#858c86;font-size:13px">Warmly,<br><strong style="color:#4a534c">The Noted team</strong></td></tr>
