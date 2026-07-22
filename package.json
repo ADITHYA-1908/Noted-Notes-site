@@ -6,8 +6,8 @@
   "scripts": {
     "dev": "concurrently -k -n API,WEB -c yellow,green \"npm:dev:server\" \"npm:dev:web\"",
     "dev:web": "vite",
-    "dev:server": "node --watch server/index.js",
-    "start": "node server/index.js",
+    "dev:server": "node --watch server/dev.js",
+    "start": "node server/dev.js",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"

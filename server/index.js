@@ -1,16 +1,11 @@
 import express from 'express'
 import { Buffer } from 'node:buffer'
 import { createHash, randomBytes, randomUUID, scrypt as scryptCallback, timingSafeEqual } from 'node:crypto'
-import { dirname, join } from 'node:path'
-import process from 'node:process'
-import { fileURLToPath } from 'node:url'
 import { promisify } from 'node:util'
 import { database, databaseType } from './database.js'
 import { sendWelcomeEmail } from './email.js'
 
 const app = express()
-const port = Number(process.env.PORT) || 3001
-const root = join(dirname(fileURLToPath(import.meta.url)), '..')
 const scrypt = promisify(scryptCallback)
 const sessionLifetime = 30 * 24 * 60 * 60 * 1000
 
@@ -100,12 +95,9 @@ app.delete('/api/notes/:id', authenticate, async (request, response, next) => {
   catch (error) { next(error) }
 })
 
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(join(root, 'dist')))
-  app.get(/^(?!\/api).*/, (request, response) => response.sendFile(join(root, 'dist', 'index.html')))
-}
-
 app.use((error, request, response, next) => { console.error(error); if (response.headersSent) return next(error); response.status(500).json({ message: 'The server could not complete that request.' }) })
 
 await database.initialize()
-app.listen(port, () => console.log(`Noted running on port ${port} with ${databaseType}`))
+
+export { databaseType }
+export default app
